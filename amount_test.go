@@ -1,14 +1,14 @@
-// Copyright (c) 2013, 2014 The btcsuite developers
+// Copyright (c) 2013, 2014 The DiviProject developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
-package btcutil_test
+package diviutil_test
 
 import (
 	"math"
 	"testing"
 
-	. "github.com/btcsuite/btcutil"
+	. "github.com/DiviProject/diviutil"
 )
 
 func TestAmountCreation(t *testing.T) {

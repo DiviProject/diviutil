@@ -3,12 +3,12 @@ package psbt
 import (
 	"bytes"
 
-	"github.com/btcsuite/btcd/btcec"
+	"github.com/DiviProject/divid/diviec"
 )
 
 // PartialSig encapsulate a (BTC public key, ECDSA signature)
 // pair, note that the fields are stored as byte slices, not
-// btcec.PublicKey or btcec.Signature (because manipulations will
+// diviec.PublicKey or diviec.Signature (because manipulations will
 // be with the former not the latter, here); compliance with consensus
 // serialization is enforced with .checkValid()
 type PartialSig struct {
@@ -30,7 +30,7 @@ func (s PartialSigSorter) Less(i, j int) bool {
 // validatePubkey checks if pubKey is *any* valid pubKey serialization in a
 // Bitcoin context (compressed/uncomp. OK).
 func validatePubkey(pubKey []byte) bool {
-	_, err := btcec.ParsePubKey(pubKey, btcec.S256())
+	_, err := diviec.ParsePubKey(pubKey, diviec.S256())
 	if err != nil {
 		return false
 	}
@@ -41,7 +41,7 @@ func validatePubkey(pubKey []byte) bool {
 // ECDSA signature, including the sighash flag.  It does *not* of course
 // validate the signature against any message or public key.
 func validateSignature(sig []byte) bool {
-	_, err := btcec.ParseDERSignature(sig, btcec.S256())
+	_, err := diviec.ParseDERSignature(sig, diviec.S256())
 	if err != nil {
 		return false
 	}
