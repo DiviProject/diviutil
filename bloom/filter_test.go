@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2016 The btcsuite developers
+// Copyright (c) 2013-2016 The DiviProject developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -9,10 +9,10 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/btcsuite/btcd/chaincfg/chainhash"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/btcutil/bloom"
+	"github.com/DiviProject/divid/chaincfg/chainhash"
+	"github.com/DiviProject/divid/wire"
+	"github.com/DiviProject/diviutil"
+	"github.com/DiviProject/diviutil/bloom"
 )
 
 // TestFilterLarge ensures a maximum sized filter can be created.
@@ -83,9 +83,9 @@ func TestFilterInsert(t *testing.T) {
 	}
 
 	got := bytes.NewBuffer(nil)
-	err = f.MsgFilterLoad().BtcEncode(got, wire.ProtocolVersion, wire.LatestEncoding)
+	err = f.MsgFilterLoad().DiviEncode(got, wire.ProtocolVersion, wire.LatestEncoding)
 	if err != nil {
-		t.Errorf("TestFilterInsert BtcDecode failed: %v\n", err)
+		t.Errorf("TestFilterInsert DiviDecode failed: %v\n", err)
 		return
 	}
 
@@ -143,9 +143,9 @@ func TestFilterFPRange(t *testing.T) {
 		f := test.filter
 		f.AddHash(hash)
 		got := bytes.NewBuffer(nil)
-		err = f.MsgFilterLoad().BtcEncode(got, wire.ProtocolVersion, wire.LatestEncoding)
+		err = f.MsgFilterLoad().DiviEncode(got, wire.ProtocolVersion, wire.LatestEncoding)
 		if err != nil {
-			t.Errorf("BtcDecode unexpected error: %v\n", err)
+			t.Errorf("DiviDecode unexpected error: %v\n", err)
 			continue
 		}
 		if !bytes.Equal(got.Bytes(), want) {
@@ -196,9 +196,9 @@ func TestFilterInsertWithTweak(t *testing.T) {
 		return
 	}
 	got := bytes.NewBuffer(nil)
-	err = f.MsgFilterLoad().BtcEncode(got, wire.ProtocolVersion, wire.LatestEncoding)
+	err = f.MsgFilterLoad().DiviEncode(got, wire.ProtocolVersion, wire.LatestEncoding)
 	if err != nil {
-		t.Errorf("TestFilterInsertWithTweak BtcDecode failed: %v\n", err)
+		t.Errorf("TestFilterInsertWithTweak DiviDecode failed: %v\n", err)
 		return
 	}
 
@@ -214,7 +214,7 @@ func TestFilterInsertWithTweak(t *testing.T) {
 func TestFilterInsertKey(t *testing.T) {
 	secret := "5Kg1gnAjaLfKiwhhPpGS3QfRg2m6awQvaj98JCZBZQ5SuS2F15C"
 
-	wif, err := btcutil.DecodeWIF(secret)
+	wif, err := diviutil.DecodeWIF(secret)
 	if err != nil {
 		t.Errorf("TestFilterInsertKey DecodeWIF failed: %v", err)
 		return
@@ -222,7 +222,7 @@ func TestFilterInsertKey(t *testing.T) {
 
 	f := bloom.NewFilter(2, 0, 0.001, wire.BloomUpdateAll)
 	f.Add(wif.SerializePubKey())
-	f.Add(btcutil.Hash160(wif.SerializePubKey()))
+	f.Add(diviutil.Hash160(wif.SerializePubKey()))
 
 	want, err := hex.DecodeString("038fc16b080000000000000001")
 	if err != nil {
@@ -230,9 +230,9 @@ func TestFilterInsertKey(t *testing.T) {
 		return
 	}
 	got := bytes.NewBuffer(nil)
-	err = f.MsgFilterLoad().BtcEncode(got, wire.ProtocolVersion, wire.LatestEncoding)
+	err = f.MsgFilterLoad().DiviEncode(got, wire.ProtocolVersion, wire.LatestEncoding)
 	if err != nil {
-		t.Errorf("TestFilterInsertWithTweak BtcDecode failed: %v\n", err)
+		t.Errorf("TestFilterInsertWithTweak DiviDecode failed: %v\n", err)
 		return
 	}
 
@@ -258,7 +258,7 @@ func TestFilterBloomMatch(t *testing.T) {
 		t.Errorf("TestFilterBloomMatch DecodeString failure: %v", err)
 		return
 	}
-	tx, err := btcutil.NewTxFromBytes(strBytes)
+	tx, err := diviutil.NewTxFromBytes(strBytes)
 	if err != nil {
 		t.Errorf("TestFilterBloomMatch NewTxFromBytes failure: %v", err)
 		return
@@ -293,7 +293,7 @@ func TestFilterBloomMatch(t *testing.T) {
 		0xf5, 0xfe, 0x95, 0xe7, 0x25, 0x59, 0xf2, 0xcc, 0x70,
 		0x43, 0xf9, 0x88, 0xac, 0x00, 0x00, 0x00, 0x00, 0x00}
 
-	spendingTx, err := btcutil.NewTxFromBytes(spendingTxBytes)
+	spendingTx, err := diviutil.NewTxFromBytes(spendingTxBytes)
 	if err != nil {
 		t.Errorf("TestFilterBloomMatch NewTxFromBytes failure: %v", err)
 		return
@@ -585,7 +585,7 @@ func TestFilterInsertP2PubKeyOnly(t *testing.T) {
 		t.Errorf("TestFilterInsertP2PubKeyOnly DecodeString failed: %v", err)
 		return
 	}
-	block, err := btcutil.NewBlockFromBytes(blockBytes)
+	block, err := diviutil.NewBlockFromBytes(blockBytes)
 	if err != nil {
 		t.Errorf("TestFilterInsertP2PubKeyOnly NewBlockFromBytes failed: %v", err)
 		return

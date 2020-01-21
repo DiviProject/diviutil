@@ -1,17 +1,17 @@
-// Copyright (c) 2013-2016 The btcsuite developers
+// Copyright (c) 2013-2016 The DiviProject developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
-package btcutil
+package diviutil
 
 import (
 	"bytes"
 	"errors"
 
-	"github.com/btcsuite/btcd/btcec"
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/chaincfg/chainhash"
-	"github.com/btcsuite/btcutil/base58"
+	"github.com/DiviProject/divid/diviec"
+	"github.com/DiviProject/divid/chaincfg"
+	"github.com/DiviProject/divid/chaincfg/chainhash"
+	"github.com/DiviProject/diviutil/base58"
 )
 
 // ErrMalformedPrivateKey describes an error where a WIF-encoded private
@@ -32,7 +32,7 @@ const compressMagic byte = 0x01
 // by calling NewWIF.
 type WIF struct {
 	// PrivKey is the private key being imported or exported.
-	PrivKey *btcec.PrivateKey
+	PrivKey *diviec.PrivateKey
 
 	// CompressPubKey specifies whether the address controlled by the
 	// imported or exported private key was created by hashing a
@@ -49,7 +49,7 @@ type WIF struct {
 // as a string encoded in the Wallet Import Format.  The compress argument
 // specifies whether the address intended to be imported or exported was created
 // by serializing the public key compressed rather than uncompressed.
-func NewWIF(privKey *btcec.PrivateKey, net *chaincfg.Params, compress bool) (*WIF, error) {
+func NewWIF(privKey *diviec.PrivateKey, net *chaincfg.Params, compress bool) (*WIF, error) {
 	if net == nil {
 		return nil, errors.New("no network")
 	}
@@ -90,12 +90,12 @@ func DecodeWIF(wif string) (*WIF, error) {
 	// Length of base58 decoded WIF must be 32 bytes + an optional 1 byte
 	// (0x01) if compressed, plus 1 byte for netID + 4 bytes of checksum.
 	switch decodedLen {
-	case 1 + btcec.PrivKeyBytesLen + 1 + 4:
+	case 1 + diviec.PrivKeyBytesLen + 1 + 4:
 		if decoded[33] != compressMagic {
 			return nil, ErrMalformedPrivateKey
 		}
 		compress = true
-	case 1 + btcec.PrivKeyBytesLen + 4:
+	case 1 + diviec.PrivKeyBytesLen + 4:
 		compress = false
 	default:
 		return nil, ErrMalformedPrivateKey
@@ -106,9 +106,9 @@ func DecodeWIF(wif string) (*WIF, error) {
 	// private key.
 	var tosum []byte
 	if compress {
-		tosum = decoded[:1+btcec.PrivKeyBytesLen+1]
+		tosum = decoded[:1+diviec.PrivKeyBytesLen+1]
 	} else {
-		tosum = decoded[:1+btcec.PrivKeyBytesLen]
+		tosum = decoded[:1+diviec.PrivKeyBytesLen]
 	}
 	cksum := chainhash.DoubleHashB(tosum)[:4]
 	if !bytes.Equal(cksum, decoded[decodedLen-4:]) {
@@ -116,8 +116,8 @@ func DecodeWIF(wif string) (*WIF, error) {
 	}
 
 	netID := decoded[0]
-	privKeyBytes := decoded[1 : 1+btcec.PrivKeyBytesLen]
-	privKey, _ := btcec.PrivKeyFromBytes(btcec.S256(), privKeyBytes)
+	privKeyBytes := decoded[1 : 1+diviec.PrivKeyBytesLen]
+	privKey, _ := diviec.PrivKeyFromBytes(diviec.S256(), privKeyBytes)
 	return &WIF{privKey, compress, netID}, nil
 }
 
@@ -129,7 +129,7 @@ func (w *WIF) String() string {
 	// is one byte for the network, 32 bytes of private key, possibly one
 	// extra byte if the pubkey is to be compressed, and finally four
 	// bytes of checksum.
-	encodeLen := 1 + btcec.PrivKeyBytesLen + 4
+	encodeLen := 1 + diviec.PrivKeyBytesLen + 4
 	if w.CompressPubKey {
 		encodeLen++
 	}
@@ -138,7 +138,7 @@ func (w *WIF) String() string {
 	a = append(a, w.netID)
 	// Pad and append bytes manually, instead of using Serialize, to
 	// avoid another call to make.
-	a = paddedAppend(btcec.PrivKeyBytesLen, a, w.PrivKey.D.Bytes())
+	a = paddedAppend(diviec.PrivKeyBytesLen, a, w.PrivKey.D.Bytes())
 	if w.CompressPubKey {
 		a = append(a, compressMagic)
 	}
@@ -151,7 +151,7 @@ func (w *WIF) String() string {
 // exported private key in either a compressed or uncompressed format.  The
 // serialization format chosen depends on the value of w.CompressPubKey.
 func (w *WIF) SerializePubKey() []byte {
-	pk := (*btcec.PublicKey)(&w.PrivKey.PublicKey)
+	pk := (*diviec.PublicKey)(&w.PrivKey.PublicKey)
 	if w.CompressPubKey {
 		return pk.SerializeCompressed()
 	}
