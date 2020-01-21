@@ -1,20 +1,20 @@
-// Copyright (c) 2013-2017 The btcsuite developers
+// Copyright (c) 2020 The DiviProject developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
 /*
-This test file is part of the btcutil package rather than than the
-btcutil_test package so it can bridge access to the internals to properly test
+This test file is part of the diviutil package rather than than the
+diviutil_test package so it can bridge access to the internals to properly test
 cases which are either not possible or can't reliably be tested via the public
 interface. The functions are only exported while the tests are being run.
 */
 
-package btcutil
+package diviutil
 
 import (
-	"github.com/btcsuite/btcd/btcec"
-	"github.com/btcsuite/btcutil/base58"
-	"github.com/btcsuite/btcutil/bech32"
+	"github.com/DiviProject/divid/diviec"
+	"github.com/DiviProject/diviutil/base58"
+	"github.com/DiviProject/diviutil/bech32"
 	"golang.org/x/crypto/ripemd160"
 )
 
@@ -82,10 +82,10 @@ func TstAddressWitnessScriptHash(version byte, program [32]byte,
 func TstAddressPubKey(serializedPubKey []byte, pubKeyFormat PubKeyFormat,
 	netID byte) *AddressPubKey {
 
-	pubKey, _ := btcec.ParsePubKey(serializedPubKey, btcec.S256())
+	pubKey, _ := diviec.ParsePubKey(serializedPubKey, diviec.S256())
 	return &AddressPubKey{
 		pubKeyFormat: pubKeyFormat,
-		pubKey:       (*btcec.PublicKey)(pubKey),
+		pubKey:       (*diviec.PublicKey)(pubKey),
 		pubKeyHashID: netID,
 	}
 }

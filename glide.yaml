@@ -1,0 +1,19 @@
+package: github.com/DiviProject/diviutil
+import:
+- package: github.com/DiviProject/divid
+  subpackages:
+  - blockchain
+  - chaincfg
+  - chaincfg/chainhash
+  - diviec
+  - txscript
+  - wire
+- package: github.com/aead/siphash
+- package: github.com/kkdai/bstream
+- package: golang.org/x/crypto
+  subpackages:
+  - ripemd160
+testImport:
+- package: github.com/davecgh/go-spew
+  subpackages:
+  - spew
